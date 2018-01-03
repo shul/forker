@@ -9,6 +9,7 @@
 
 #include "mmaper.h"
 #include "common.h"
+#include "child.h"
 
 #include "Handler.hh"
 #include "ParentSignalHandler.hh"
@@ -83,6 +84,7 @@ void Parent::set_new_child(int child_idx, pid_t pid)
 void Parent::child_fn(int idx)
 {
     map_memory(idx);
+    set_child_idx(idx);
     run_epoll(0);
 }
 
