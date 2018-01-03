@@ -36,10 +36,12 @@ void run_epoll(int sfd, int is_parent)
     }
 
     ev.events = EPOLLIN;
-    if (is_parent)
+    if (is_parent) {
         ev.data.ptr = new ParentSignalHandler(sfd, &parent);
-    else
+        parent.set_epoll_fd(epollfd);
+    } else {
         ev.data.ptr = new ChildSignalHandler(sfd);
+    }
 
     if (epoll_ctl(epollfd, EPOLL_CTL_ADD, sfd, &ev) == -1) {
         handle_error("epoll_ctl: signalfd");
