@@ -23,6 +23,10 @@ int map_memory(void)
     if (fd < 0)
         handle_error("mkstemp");
  
+    res = ftruncate(fd, FILESZ);
+    if (res)
+        handle_error("ftruncate");
+
 #if 0  
     res = posix_fallocate(fd, 0, FILESZ);
     if (res)
