@@ -4,5 +4,5 @@
 
 #pragma once
 
-int run_server(int sfd);
+extern "C" int run_server(int sfd);
 

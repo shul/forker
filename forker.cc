@@ -102,8 +102,6 @@ static void signalfd_epoll_child(int fd)
 {
     struct signalfd_siginfo fdsi;
     ssize_t sz;
-    pid_t pid;
-    int status;
 
     sz = read(fd, &fdsi, sizeof(struct signalfd_siginfo));
     if (sz != sizeof(struct signalfd_siginfo))
@@ -248,8 +246,7 @@ void run_epoll(int sfd, int parent)
 int main(int argc, char *argv[])
 {
     sigset_t mask;
-    int sfd, epollfd;
-    struct epoll_event ev;
+    int sfd;
 
     sigemptyset(&mask);
     sigaddset(&mask, SIGINT);

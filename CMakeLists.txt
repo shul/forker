@@ -37,7 +37,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${warning_flags} \
 
 set(target forker)
 
-add_executable(${target} forker.c server.c mmaper.c)
+add_executable(${target} forker.cc server.c mmaper.c)
 
 add_executable(client client.c)
 
