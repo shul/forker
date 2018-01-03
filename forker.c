@@ -81,7 +81,7 @@ static void do_forks(int num, int sfd)
             ++n_children;
         } else {
             map_memory();
-            run_server();
+            run_server(sfd);
         }
     }
 }
@@ -95,6 +95,77 @@ static void notify_children(int sig)
             fprintf(stderr, "%d: Sending signal to %d\n", getpid(), children[i]);
             kill(children[i], sig);
         }
+    }
+}
+
+static void signalfd_epoll_child(int fd)
+{
+    struct signalfd_siginfo fdsi;
+    ssize_t sz;
+    pid_t pid;
+    int status;
+
+    sz = read(fd, &fdsi, sizeof(struct signalfd_siginfo));
+    if (sz != sizeof(struct signalfd_siginfo))
+	handle_error("read");
+
+    if (fdsi.ssi_signo == SIGINT) {
+	fprintf(stderr, "%d: Got SIGINT from %d\n", getpid(), fdsi.ssi_pid);
+    } else if (fdsi.ssi_signo == SIGQUIT) {
+	fprintf(stderr, "%d: Got SIGQUIT from %d\n", getpid(), fdsi.ssi_pid);
+        exit(EXIT_SUCCESS);
+    } else if (fdsi.ssi_signo == SIGTERM) {
+	fprintf(stderr, "%d: Got SIGTERM from %d\n", getpid(), fdsi.ssi_pid);
+        exit(EXIT_SUCCESS);
+    } else {
+	fprintf(stderr, "%d: Read unexpected signal from %d\n", getpid(), fdsi.ssi_pid);
+    }
+}
+
+static void signalfd_epoll_parent(int fd)
+{
+    struct signalfd_siginfo fdsi;
+    ssize_t sz;
+    pid_t pid;
+    int status;
+
+    sz = read(fd, &fdsi, sizeof(struct signalfd_siginfo));
+    if (sz != sizeof(struct signalfd_siginfo))
+	handle_error("read");
+
+    if (fdsi.ssi_signo == SIGINT) {
+	fprintf(stderr, "%d: Got SIGINT from %d\n", getpid(), fdsi.ssi_pid);
+    } else if (fdsi.ssi_signo == SIGQUIT) {
+	fprintf(stderr, "%d: Got SIGQUIT from %d\n", getpid(), fdsi.ssi_pid);
+	exiting = 1;
+	notify_children(SIGQUIT);
+    } else if (fdsi.ssi_signo == SIGTERM) {
+	fprintf(stderr, "%d: Got SIGTERM from %d\n", getpid(), fdsi.ssi_pid);
+	exiting = 1;
+	notify_children(SIGTERM);
+    } else if (fdsi.ssi_signo == SIGCHLD) {
+	time_t t = time(NULL);
+	struct tm *tm = localtime(&t);
+
+	fprintf(stderr, "%d: Got SIGCHLD from %d (%s)\n", getpid(), fdsi.ssi_pid, asctime(tm));
+	do {
+	    pid = waitpid(-1, &status, WNOHANG);
+	    if (pid > 0) {
+		fprintf(stderr, "%d: Process %d exited\n", getpid(), pid);
+		clear_child(pid);
+
+		if (!exiting) {
+		    do_forks(1, fd);
+		} else {
+		    if (n_children == 0) {
+			fprintf(stderr, "%d: All children exited\n", getpid());
+			exit(EXIT_SUCCESS);
+		    }
+		}
+	    }
+	} while (pid > 0);
+    } else {
+	fprintf(stderr, "%d: Read unexpected signal from %d\n", getpid(), fdsi.ssi_pid);
     }
 }
 

@@ -13,7 +13,8 @@ static void * mmap_addr;
         exit(EXIT_FAILURE);                                                                                            \
     } while (0)
 
-#define FILESZ (30L * 1024L * 1024L * 1024L)
+//#define FILESZ (30L * 1024L * 1024L * 1024L)
+#define FILESZ (30L * 1024L)
 
 #define CORE_FILTER "0x3f"
 
