@@ -22,6 +22,8 @@ void ParentSignalHandler::handle()
 
     if (fdsi.ssi_signo == SIGINT) {
 	fprintf(stderr, "%d: Got SIGINT from %d\n", getpid(), fdsi.ssi_pid);
+	parent->exiting = 1;
+	parent->notify_children(SIGQUIT);
     } else if (fdsi.ssi_signo == SIGQUIT) {
 	fprintf(stderr, "%d: Got SIGQUIT from %d\n", getpid(), fdsi.ssi_pid);
 	parent->exiting = 1;

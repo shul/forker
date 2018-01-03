@@ -28,6 +28,7 @@ public:
     void do_forks(int num);
     void respawn(int child_idx);
 
+    void run_epoll(int is_parent);
     void set_new_child(int child_idx, pid_t pid);
 
 protected:
