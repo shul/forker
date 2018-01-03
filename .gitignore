@@ -38,6 +38,7 @@ cmake_install.cmake
 
 # binaries
 forker
+client
 
 # diff
 *.orig
