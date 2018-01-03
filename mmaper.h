@@ -1,3 +1,3 @@
 #pragma once
 
-extern "C" int map_memory(void);
+extern "C" int map_memory(int idx);

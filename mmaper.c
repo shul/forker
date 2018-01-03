@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <limits.h>
+
 #include "common.h"
 
 static void * mmap_addr;
@@ -27,17 +29,25 @@ int allow_mmap_in_core()
     return 0;
 }
 
-int map_memory(void)
+int map_memory(int idx)
 {
     static char template[] = "/tmp/myfileXXXXXX";
     int res;
 
     allow_mmap_in_core();
 
+#if 0
     int fd = mkstemp(template);
     if (fd < 0)
         handle_error("mkstemp");
- 
+#endif
+
+    char fname[PATH_MAX];
+    snprintf(fname, sizeof(fname), "/tmp/mmaped_file_%d", idx);
+    int fd = open(fname, O_CREAT | O_RDWR, S_IWUSR | S_IRUSR);
+    if (fd < 0)
+        handle_error("open");
+
     res = ftruncate(fd, FILESZ);
     if (res)
         handle_error("ftruncate");
