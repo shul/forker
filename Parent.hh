@@ -26,6 +26,7 @@ public:
     void clear_child(pid_t pid);
     void add_new_child(pid_t pid);
     void do_forks(int num);
+    void respawn(int child_idx);
 
 protected:
     int exiting;
@@ -34,4 +35,6 @@ protected:
     int n_children;
     int sfd;
     int epoll_fd;
+
+    void child_fn();
 };

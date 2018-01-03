@@ -63,6 +63,29 @@ void Parent::add_new_child(pid_t pid)
     ++n_children;
 }
 
+void Parent::child_fn()
+{
+    map_memory();
+    run_server(sfd);
+}
+
+void Parent::respawn(int child_idx)
+{
+    assert(children[child_idx] == 0);
+
+    pid_t pid = fork();
+    if (pid == -1)
+        handle_error("fork respawn");
+
+    if (pid) {
+        fprintf(stderr, "Respawned %d\n", pid);
+        children[child_idx] = pid;
+        ++n_children;
+    } else {
+        child_fn();
+    }
+}
+
 void Parent::do_forks(int num)
 {
     pid_t pid;
@@ -77,8 +100,7 @@ void Parent::do_forks(int num)
             fprintf(stderr, "Forked %d\n", pid);
             add_new_child(pid);
         } else {
-            map_memory();
-            run_server(sfd);
+            child_fn();
         }
     }
 }

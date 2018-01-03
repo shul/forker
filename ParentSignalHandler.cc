@@ -38,11 +38,12 @@ void ParentSignalHandler::handle()
 	do {
 	    pid = waitpid(-1, &status, WNOHANG);
 	    if (pid > 0) {
-		fprintf(stderr, "%d: Process %d exited\n", getpid(), pid);
+                int child_idx = parent->get_child_idx(pid);
+		fprintf(stderr, "%d: Process %d exited (idx:%d)\n", getpid(), pid, child_idx);
 		parent->clear_child(pid);
 
 		if (!parent->exiting) {
-		    parent->do_forks(1);
+		    parent->respawn(child_idx);
 		} else {
 		    if (parent->n_children == 0) {
 			fprintf(stderr, "%d: All children exited\n", getpid());
