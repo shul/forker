@@ -15,10 +15,29 @@ static void * mmap_addr;
 
 #define FILESZ (30L * 1024L * 1024L * 1024L)
 
+#define CORE_FILTER "0x3f"
+
+int allow_mmap_in_core()
+{
+    int fd = open("/proc/self/coredump_filter", O_WRONLY);
+    if (fd < 0)
+        handle_error("open");
+
+    ssize_t written = write(fd, CORE_FILTER, sizeof(CORE_FILTER);
+    if (written != sizeof(CORE_FILTER))
+        handle_error("write");
+
+    close(fd);
+    return 0;
+}
+
 int map_memory(void)
 {
     static char template[] = "/tmp/myfileXXXXXX";
     int res;
+
+    allow_mmap_in_core();
+
     int fd = mkstemp(template);
     if (fd < 0)
         handle_error("mkstemp");
