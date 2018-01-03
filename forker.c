@@ -10,6 +10,7 @@
 
 #include "server.h"
 #include "mmaper.h"
+#include <time.h>
 
 #define handle_error(msg)                                                                                              \
     do {                                                                                                               \
@@ -146,7 +147,10 @@ void run_epoll(int sfd, int parent)
                     exit(EXIT_SUCCESS);
                 }
             } else if (fdsi.ssi_signo == SIGCHLD) {
-                fprintf(stderr, "%d: Got SIGCHLD from %d\n", getpid(), fdsi.ssi_pid);
+                time_t t = time(NULL);
+                struct tm *tm = localtime(&t);
+
+                fprintf(stderr, "%d: Got SIGCHLD from %d (%s)\n", getpid(), fdsi.ssi_pid, asctime(tm));
                 do {
                     pid = waitpid(-1, &status, WNOHANG);
                     if (pid > 0) {

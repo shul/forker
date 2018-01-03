@@ -23,7 +23,7 @@ int allow_mmap_in_core()
     if (fd < 0)
         handle_error("open");
 
-    ssize_t written = write(fd, CORE_FILTER, sizeof(CORE_FILTER);
+    ssize_t written = write(fd, CORE_FILTER, sizeof(CORE_FILTER));
     if (written != sizeof(CORE_FILTER))
         handle_error("write");
 
