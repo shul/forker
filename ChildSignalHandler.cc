@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include "common.h"
 
+void ChildSignalHandler::handle_exit()
+{
+        exit(EXIT_SUCCESS);
+}
+
 void ChildSignalHandler::handle()
 {
     struct signalfd_siginfo fdsi;
@@ -18,13 +23,13 @@ void ChildSignalHandler::handle()
 
     if (fdsi.ssi_signo == SIGINT) {
 	fprintf(stderr, "%d: Got SIGINT from %d\n", getpid(), fdsi.ssi_pid);
-        exit(EXIT_SUCCESS);
+        handle_exit();
     } else if (fdsi.ssi_signo == SIGQUIT) {
 	fprintf(stderr, "%d: Got SIGQUIT from %d\n", getpid(), fdsi.ssi_pid);
-        exit(EXIT_SUCCESS);
+        handle_exit();
     } else if (fdsi.ssi_signo == SIGTERM) {
 	fprintf(stderr, "%d: Got SIGTERM from %d\n", getpid(), fdsi.ssi_pid);
-        exit(EXIT_SUCCESS);
+        handle_exit();
     } else {
 	fprintf(stderr, "%d: Read unexpected signal from %d\n", getpid(), fdsi.ssi_pid);
     }

@@ -10,5 +10,8 @@ public:
     {}
 
     virtual void handle();
+
+protected:
+    void handle_exit();
 };
 
