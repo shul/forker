@@ -37,7 +37,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${warning_flags} \
 
 set(target forker)
 
-add_executable(${target} forker.cc server.c mmaper.c ChildSignalHandler.cc ParentSignalHandler.cc Parent.cc)
+add_executable(${target} forker.cc server.c mmaper.c ChildSignalHandler.cc ParentSignalHandler.cc Parent.cc InotifyHandler.cc)
 
 add_executable(client client.c)
 

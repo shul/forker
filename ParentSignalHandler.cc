@@ -7,12 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/wait.h>
-
-#define handle_error(msg)                                                                                              \
-    do {                                                                                                               \
-        perror(msg);                                                                                                   \
-        exit(EXIT_FAILURE);                                                                                            \
-    } while (0)
+#include "common.h"
 
 void ParentSignalHandler::handle()
 {
@@ -23,7 +18,7 @@ void ParentSignalHandler::handle()
 
     sz = read(fd, &fdsi, sizeof(struct signalfd_siginfo));
     if (sz != sizeof(struct signalfd_siginfo))
-	handle_error("read");
+	handle_error("read parent signal handler");
 
     if (fdsi.ssi_signo == SIGINT) {
 	fprintf(stderr, "%d: Got SIGINT from %d\n", getpid(), fdsi.ssi_pid);

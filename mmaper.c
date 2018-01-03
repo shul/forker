@@ -4,14 +4,9 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include "common.h"
 
 static void * mmap_addr;
-
-#define handle_error(msg)                                                                                              \
-    do {                                                                                                               \
-        perror(msg);                                                                                                   \
-        exit(EXIT_FAILURE);                                                                                            \
-    } while (0)
 
 //#define FILESZ (30L * 1024L * 1024L * 1024L)
 #define FILESZ (30L * 1024L)

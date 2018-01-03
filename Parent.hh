@@ -9,7 +9,7 @@ class Parent
     friend class ParentSignalHandler;
 public:
     Parent()
-    : exiting(0), n_children(0), sfd(-1), epollfd(-1)
+    : exiting(0), n_children(0), sfd(-1), epoll_fd(-1)
     {
         memset(children, 0, sizeof(children));
     }
