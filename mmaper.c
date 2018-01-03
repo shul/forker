@@ -5,13 +5,14 @@
 #include <errno.h>
 #include <unistd.h>
 #include <limits.h>
+#include <time.h>
 
 #include "common.h"
 
 static void * mmap_addr;
 
 //#define FILESZ (30L * 1024L * 1024L * 1024L)
-#define FILESZ (30L * 1024L)
+#define FILESZ (5L * 1024L * 1024L * 1024L)
 
 #define CORE_FILTER "0x3f"
 
@@ -29,7 +30,7 @@ int allow_mmap_in_core()
     return 0;
 }
 
-int map_memory(int idx)
+void *map_memory(int idx)
 {
     static char template[] = "/tmp/myfileXXXXXX";
     int res;
@@ -62,8 +63,14 @@ int map_memory(int idx)
     if (mmap_addr == MAP_FAILED)
         handle_error("mmap");
 
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+
+
+    sprintf((char *)mmap_addr,"This is %d time %s",idx, asctime(tm));
+
     close(fd);
 
-    return 0;
+    return mmap_addr;
 }
 

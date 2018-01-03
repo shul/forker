@@ -83,9 +83,12 @@ void Parent::set_new_child(int child_idx, pid_t pid)
 
 void Parent::child_fn(int idx)
 {
-    map_memory(idx);
+    void *map_addr = map_memory(idx);
+    fprintf(stderr,"shared memory:%p\n",map_addr);
     set_child_idx(idx);
     run_epoll(0);
+
+
 }
 
 void Parent::respawn(int child_idx)
