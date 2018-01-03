@@ -81,6 +81,14 @@ void InotifyHandler::handle()
                    if (event->len)
                        printf("%s", event->name);
 
+                   {
+                       pid_t pid = 0;
+                       int idx = 0;
+                       int n_vals = sscanf(event->name, "child_%d_%d", &pid, &idx);
+                       if (n_vals == 2 && pid != 0 && idx != 0)
+                           printf("Child idx %d pid %d is dying\n", idx, pid);
+                   }
+
                    /* Print type of filesystem object */
 
                    if (event->mask & IN_ISDIR)
