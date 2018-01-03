@@ -7,7 +7,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+
 #include "server.h"
+#include "mmaper.h"
 
 #define handle_error(msg)                                                                                              \
     do {                                                                                                               \
@@ -77,6 +79,7 @@ static void do_forks(int num, int sfd)
             children[find_empty_child_idx()] = pid;
             ++n_children;
         } else {
+            map_memory();
             run_server();
         }
     }
